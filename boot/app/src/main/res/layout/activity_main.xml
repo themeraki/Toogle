@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Hotspot Automator"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Tries to turn hotspot on when charging and off when unplugged automatically. If Android blocks direct control, it falls back to the visible Settings + Accessibility flow. No ADB permission flow is used."
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:id="@+id/lockPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/passwordTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create app passcode"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/passcodeInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Passcode"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/passcodeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Continue" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dashboardPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Automation is stopped."
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/notificationPermissionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Allow notification permission" />
+
+            <Button
+                android:id="@+id/accessibilityButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Open Accessibility settings" />
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start automation" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="After starting once, the app restarts after reboot. For best battery usage it stays idle until charger events, then tries direct hotspot control first and only opens Settings as fallback."
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hotspot Automator</string>
+    <string name="accessibility_description">Allows Hotspot Automator to tap the hotspot switch in Android settings when charging starts or stops.</string>
+</resources>
