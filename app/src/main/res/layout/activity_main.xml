@@ -1,99 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_size"
-    android:layout_height="match_size"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="center_horizontal">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <!-- PASSWORD SCREEN (Shown if locked/unconfigured) -->
     <LinearLayout
-        android:id="@+id/layoutPassword"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="visible">
+        android:padding="24dp">
 
         <TextView
-            android:id="@+id/tvPasswordTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set Your App Password"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
-
-        <EditText
-            android:id="@+id/etPasswordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Password"
-            android:inputType="textPassword"
-            android:textAlignment="center"
-            android:layout_marginBottom="16dp"/>
+            android:text="Hotspot Automator"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnPasswordAction"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit" />
+            android:layout_marginTop="8dp"
+            android:text="Tries to turn hotspot on when charging and off when unplugged automatically. If Android blocks direct control, it falls back to the visible Settings + Accessibility flow. No ADB permission flow is used."
+            android:textSize="15sp" />
+
+        <LinearLayout
+            android:id="@+id/lockPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/passwordTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Create app passcode"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/passcodeInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Passcode"
+                android:inputType="textPassword" />
+
+            <Button
+                android:id="@+id/passcodeButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Continue" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dashboardPanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/statusText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Automation is stopped."
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/notificationPermissionButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Allow notification permission" />
+
+            <Button
+                android:id="@+id/accessibilityButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Open Accessibility settings" />
+
+            <Button
+                android:id="@+id/startButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Start automation" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="After starting once, the app restarts after reboot. For best battery usage it stays idle until charger events, then tries direct hotspot control first and only opens Settings as fallback."
+                android:textSize="14sp" />
+        </LinearLayout>
     </LinearLayout>
-
-    <!-- DASHBOARD PANEL (Shown after unlocking successfully) -->
-    <LinearLayout
-        android:id="@+id/layoutDashboard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hotspot Automator Panel"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp"/>
-
-        <Button
-            android:id="@+id/btnAccessibilityPerm"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Grant Accessibility Permission"
-            android:layout_marginBottom="12dp" />
-
-        <Button
-            android:id="@+id/btnToggleTracking"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Start Tracking Automation"
-            android:layout_marginBottom="32dp"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#CCCCCC"
-            android:layout_marginBottom="24dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Change Password Configuration"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <EditText
-            android:id="@+id/etNewPassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Type New Password"
-            android:inputType="textPassword" />
-
-        <Button
-            android:id="@+id/btnUpdatePassword"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Update Password" />
-    </LinearLayout>
-</LinearLayout>
+</ScrollView>

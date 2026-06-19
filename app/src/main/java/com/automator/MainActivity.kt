@@ -1,92 +1,86 @@
 package com.automator
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import android.app.Activity
 
-class MainActivity : AppCompatActivity() {
-
-    private lateinit var prefs: SharedPreferences
+class MainActivity : Activity() {
+    private val prefs by lazy { getSharedPreferences(AutomationState.PREFS, Context.MODE_PRIVATE) }
+    private lateinit var lockPanel: LinearLayout
+    private lateinit var dashboardPanel: LinearLayout
+    private lateinit var statusText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        prefs = getSharedPreferences("AutomatorSecurityConfig", Context.MODE_PRIVATE)
+        lockPanel = findViewById(R.id.lockPanel)
+        dashboardPanel = findViewById(R.id.dashboardPanel)
+        statusText = findViewById(R.id.statusText)
 
-        val layoutPassword = findViewById<LinearLayout>(R.id.layoutPassword)
-        val layoutDashboard = findViewById<LinearLayout>(R.id.layoutDashboard)
-        val tvPasswordTitle = findViewById<TextView>(R.id.tvPasswordTitle)
-        val etPasswordInput = findViewById<EditText>(R.id.etPasswordInput)
-        val btnPasswordAction = findViewById<Button>(R.id.btnPasswordAction)
-        
-        val btnAccessibilityPerm = findViewById<Button>(R.id.btnAccessibilityPerm)
-        val btnToggleTracking = findViewById<Button>(R.id.btnToggleTracking)
-        val etNewPassword = findViewById<EditText>(R.id.etNewPassword)
-        val btnUpdatePassword = findViewById<Button>(R.id.btnUpdatePassword)
+        val passwordTitle = findViewById<TextView>(R.id.passwordTitle)
+        val passcodeInput = findViewById<EditText>(R.id.passcodeInput)
+        val passcodeButton = findViewById<Button>(R.id.passcodeButton)
+        val hasPasscode = prefs.contains(AutomationState.KEY_PASSCODE)
+        passwordTitle.text = if (hasPasscode) "Enter app passcode" else "Create app passcode"
 
-        val hasPasswordSet = prefs.contains("app_lock_key")
+        passcodeButton.setOnClickListener {
+            val typed = passcodeInput.text.toString().trim()
+            if (typed.isBlank()) {
+                toast("Enter a passcode first")
+            } else if (!prefs.contains(AutomationState.KEY_PASSCODE)) {
+                prefs.edit().putString(AutomationState.KEY_PASSCODE, typed).apply()
+                unlock()
+            } else if (typed == prefs.getString(AutomationState.KEY_PASSCODE, null)) {
+                unlock()
+            } else {
+                toast("Wrong passcode")
+            }
+        }
 
-        if (!hasPasswordSet) {
-            tvPasswordTitle.text = "Create App Password"
-            btnPasswordAction.text = "Save & Set"
+        findViewById<Button>(R.id.notificationPermissionButton).setOnClickListener { askNotificationPermission() }
+        findViewById<Button>(R.id.accessibilityButton).setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+        findViewById<Button>(R.id.startButton).setOnClickListener { startAutomation() }
+    }
+
+    private fun unlock() {
+        lockPanel.visibility = View.GONE
+        dashboardPanel.visibility = View.VISIBLE
+        renderStatus()
+    }
+
+    private fun startAutomation() {
+        prefs.edit().putBoolean(AutomationState.KEY_ENABLED, true).apply()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startForegroundService(Intent(this, ChargerMonitorService::class.java)) else startService(Intent(this, ChargerMonitorService::class.java))
+        toast("Automation started")
+        renderStatus()
+    }
+
+    private fun renderStatus() {
+        val enabled = prefs.getBoolean(AutomationState.KEY_ENABLED, false)
+        statusText.text = if (enabled) "Automation is enabled." else "Automation is stopped."
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 10)
         } else {
-            tvPasswordTitle.text = "Enter Access Password"
-            btnPasswordAction.text = "Unlock App"
-        }
-
-        btnPasswordAction.setOnClickListener {
-            val input = etPasswordInput.text.toString().trim()
-            if (input.isEmpty()) {
-                Toast.makeText(this, "Field cannot be empty", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            if (!prefs.contains("app_lock_key")) {
-                prefs.edit().putString("app_lock_key", input).apply()
-                Toast.makeText(this, "Password Configuration Saved!", Toast.LENGTH_SHORT).show()
-                layoutPassword.visibility = View.GONE
-                layoutDashboard.visibility = View.VISIBLE
-            } else {
-                val savedPass = prefs.getString("app_lock_key", "")
-                if (input == savedPass) {
-                    layoutPassword.visibility = View.GONE
-                    layoutDashboard.visibility = View.VISIBLE
-                } else {
-                    Toast.makeText(this, "Incorrect Password! Access Denied.", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        btnAccessibilityPerm.setOnClickListener {
-            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-            startActivity(intent)
-        }
-
-        btnToggleTracking.setOnClickListener {
-            val serviceIntent = Intent(this, ChargerService::class.java)
-            startService(serviceIntent)
-            Toast.makeText(this, "Charger Target Tracker Background Service Started", Toast.LENGTH_SHORT).show()
-        }
-
-        btnUpdatePassword.setOnClickListener {
-            val newPass = etNewPassword.text.toString().trim()
-            if (newPass.isNotEmpty()) {
-                prefs.edit().putString("app_lock_key", newPass).apply()
-                etNewPassword.text.clear()
-                Toast.makeText(this, "Password Updated Successfully!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Please enter a valid password", Toast.LENGTH_SHORT).show()
-            }
+            toast("Notification permission is already allowed or not needed")
         }
     }
+
+    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
