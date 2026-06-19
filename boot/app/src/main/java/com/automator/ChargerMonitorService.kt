@@ -39,7 +39,12 @@ class ChargerMonitorService : Service() {
     }
 
     private fun requestHotspot(enable: Boolean) {
-
+        if (TetheringController.setWifiHotspot(this, enable)) {
+            AutomationState.requestedHotspotEnabled = null
+        } else {
+            AutomationState.requestedHotspotEnabled = enable
+            openHotspotSettings()
+        }
     }
 
     private fun openHotspotSettings() {
@@ -64,11 +69,14 @@ class ChargerMonitorService : Service() {
         return builder
             .setSmallIcon(android.R.drawable.ic_lock_idle_charging)
             .setContentTitle("Hotspot Automator running")
-
+            .setContentText("Idle until charger is plugged or unplugged.")
             .setOngoing(true)
             .build()
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_STICKY
+    }
 
     override fun onDestroy() {
         unregisterReceiver(powerReceiver)

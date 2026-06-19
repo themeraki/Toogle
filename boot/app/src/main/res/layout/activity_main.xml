@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-
+            android:text="Tries to turn hotspot on when charging and off when unplugged automatically. If Android blocks direct control, it falls back to the visible Settings + Accessibility flow. No ADB permission flow is used."
             android:textSize="15sp" />
 
         <LinearLayout
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-
+                android:text="After starting once, the app restarts after reboot. For best battery usage it stays idle until charger events, then tries direct hotspot control first and only opens Settings as fallback."
                 android:textSize="14sp" />
         </LinearLayout>
     </LinearLayout>
